@@ -71,7 +71,10 @@ def _get_session_token(request: Requestish) -> Optional[str]:
 
     bearer_token = request.headers.get('Authorization')
     if bearer_token is not None:
-        return bearer_token.replace('Bearer ', '')
+        scheme, separator, token = bearer_token.partition(' ')
+        if separator and scheme.lower() == 'bearer':
+            return token.lstrip(' ')
+        return bearer_token
 
     cookie_header = request.headers.get('cookie')
     if cookie_header is not None:
